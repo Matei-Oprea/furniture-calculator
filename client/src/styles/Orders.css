@@ -1,0 +1,177 @@
+.orders-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .orders-page h1 {
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+  }
+  
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .no-orders {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--grey-color);
+  }
+  
+  .browse-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .browse-link:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  /* Order card styles */
+  .order-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--light-grey);
+    cursor: pointer;
+  }
+  
+  .order-basic-info {
+    flex: 1;
+  }
+  
+  .order-basic-info h3 {
+    margin: 0;
+    color: var(--dark-color);
+  }
+  
+  .order-date {
+    color: var(--grey-color);
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0;
+  }
+  
+  .expand-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--grey-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: 1rem;
+  }
+  
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .status-pending {
+    background-color: rgba(108, 117, 125, 0.2);
+    color: var(--grey-color);
+  }
+  
+  .status-confirmed {
+    background-color: rgba(74, 109, 167, 0.2);
+    color: var(--primary-color);
+  }
+  
+  .status-shipped {
+    background-color: rgba(233, 196, 106, 0.2);
+    color: #b38728;
+  }
+  
+  .status-delivered {
+    background-color: rgba(42, 157, 143, 0.2);
+    color: var(--success-color);
+  }
+  
+  .status-cancelled {
+    background-color: rgba(230, 57, 70, 0.2);
+    color: var(--danger-color);
+  }
+  
+  /* Order details */
+  .order-details {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .order-package h4,
+  .order-delivery-info h4,
+  .order-observation h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .order-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .order-price {
+    font-weight: 500;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+  }
+  
+  .order-delivery-info p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .order-observation {
+    margin-top: 1rem;
+  }
+  
+  /* Responsive styles */
+  @media screen and (max-width: 768px) {
+    .order-header {
+      flex-wrap: wrap;
+    }
+  
+    .order-basic-info {
+      flex: 0 0 100%;
+      margin-bottom: 0.5rem;
+    }
+  
+    .order-status {
+      flex: 1;
+    }
+  
+    .expand-btn {
+      margin-left: 0;
+    }
+  
+    .order-details {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
