@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const PackageCard = ({ packageData, onOrderClick }) => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -10,7 +10,7 @@ const PackageCard = ({ packageData, onOrderClick }) => {
   // Parse image URLs if they're a string
   const imageUrls = Array.isArray(packageData.image_urls)
     ? packageData.image_urls
-    : typeof packageData.image_urls === 'string'
+    : typeof packageData.image_urls === "string"
     ? JSON.parse(packageData.image_urls)
     : [];
 
@@ -26,13 +26,28 @@ const PackageCard = ({ packageData, onOrderClick }) => {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
-    
+
     if (onOrderClick) {
       onOrderClick(packageData);
     }
+  };
+
+  // Format the price properly
+  const formatPrice = (price) => {
+    // Check if price exists and convert to number if it's a string
+    if (price !== undefined && price !== null) {
+      // Make sure price is a number
+      const numPrice = typeof price === "string" ? parseFloat(price) : price;
+      // Check if it's a valid number after conversion
+      if (!isNaN(numPrice)) {
+        return numPrice.toFixed(2);
+      }
+    }
+    // Fallback for invalid or missing price
+    return "0.00";
   };
 
   return (
@@ -80,7 +95,7 @@ const PackageCard = ({ packageData, onOrderClick }) => {
             <span>Type:</span> {packageData.type}
           </div>
           <div className="package-price">
-            <span>Price:</span> ${packageData.price.toFixed(2)}
+            <span>Price:</span> ${formatPrice(packageData.price)}
           </div>
         </div>
         <button className="add-to-cart-btn" onClick={handleAddToCart}>

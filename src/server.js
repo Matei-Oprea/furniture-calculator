@@ -24,19 +24,22 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
 
 // Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production')
+{
   // Set static folder
   app.use(express.static(path.join(__dirname, '../client/build')));
 
-  app.get('*', (req, res) => {
+  app.get('*', (req, res) =>
+  {
     res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
   });
 }
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) =>
+{
   console.error(err.stack);
-  
+
   res.status(err.statusCode || 500).json({
     success: false,
     error: err.message || 'Server Error'

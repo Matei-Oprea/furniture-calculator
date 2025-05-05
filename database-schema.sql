@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS contacts (
 );
 
 -- Insert admin user (password: admin123)
-INSERT INTO users (name, surname, email, phone, password, role) 
+INSERT INTO users (name, surname, email, phone, password, role)
 VALUES ('Admin', 'User', 'admin@example.com', '123456789', '$2b$10$xLtQHRjO/kI5V8qD5bMQAeujo.6RKQoJ5rKXQPeKLQgC7jEKDdnZK', 'admin');
 
 -- Insert sample packages
