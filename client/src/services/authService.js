@@ -4,7 +4,10 @@ import api from './apiService';
 export const register = async (userData) => {
   try {
     const response = await api.post('/auth/register', userData);
-    return response.data;
+    if (response.data.success) {
+      return response.data;
+    }
+    throw new Error(response.data.message || 'Registration failed');
   } catch (error) {
     throw error;
   }
@@ -14,7 +17,10 @@ export const register = async (userData) => {
 export const login = async (email, password) => {
   try {
     const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    if (response.data.success) {
+      return response.data;
+    }
+    throw new Error(response.data.message || 'Login failed');
   } catch (error) {
     throw error;
   }
@@ -24,7 +30,10 @@ export const login = async (email, password) => {
 export const getCurrentUser = async () => {
   try {
     const response = await api.get('/auth/me');
-    return response.data.user;
+    if (response.data.success) {
+      return response.data.user;
+    }
+    throw new Error(response.data.message || 'Failed to get user data');
   } catch (error) {
     throw error;
   }
@@ -34,7 +43,10 @@ export const getCurrentUser = async () => {
 export const updateUserDetails = async (userData) => {
   try {
     const response = await api.put('/auth/updatedetails', userData);
-    return response.data.user;
+    if (response.data.success) {
+      return response.data.user;
+    }
+    throw new Error(response.data.message || 'Failed to update user details');
   } catch (error) {
     throw error;
   }
@@ -44,7 +56,10 @@ export const updateUserDetails = async (userData) => {
 export const updatePassword = async (passwordData) => {
   try {
     const response = await api.put('/auth/updatepassword', passwordData);
-    return response.data;
+    if (response.data.success) {
+      return response.data;
+    }
+    throw new Error(response.data.message || 'Failed to update password');
   } catch (error) {
     throw error;
   }

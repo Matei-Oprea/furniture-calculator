@@ -1,130 +1,96 @@
-const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { getAll, getOne, runQuery } = require('../utils/db');
 
 class User
 {
   // Find user by ID
   static async findById(id)
   {
-    try
-    {
-      const [rows] = await pool.execute(
-        'SELECT id, name, surname, email, phone, role FROM users WHERE id = ?',
-        [id]
-      );
-      return rows[0];
-    } catch (error)
-    {
-      throw error;
-    }
+    return await getOne('SELECT * FROM users WHERE id = ?', [id]);
   }
 
   // Find user by email
   static async findByEmail(email)
   {
-    try
-    {
-      const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
-      return rows[0];
-    } catch (error)
-    {
-      throw error;
-    }
+    return await getOne('SELECT * FROM users WHERE email = ?', [email]);
   }
 
   // Create user
-  static async create(userData)
+  static async create({ name, surname, email, phone, password, role = 'customer' })
   {
-    try
-    {
-      // Hash password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(userData.password, salt);
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-      const [result] = await pool.execute(
-        'INSERT INTO users (name, surname, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?)',
-        [
-          userData.name,
-          userData.surname,
-          userData.email,
-          userData.phone || '',
-          hashedPassword,
-          userData.role || 'customer'
-        ]
-      );
+    const result = await runQuery(
+      `INSERT INTO users (name, surname, email, phone, password, role)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, surname, email, phone, hashedPassword, role]
+    );
 
-      // Get created user (without password)
-      const [rows] = await pool.execute(
-        'SELECT id, name, surname, email, phone, role FROM users WHERE id = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error)
-    {
-      throw error;
-    }
+    return this.findById(result.id);
   }
 
   // Update user
   static async update(id, userData)
   {
-    try
+    const updates = [];
+    const values = [];
+
+    // Handle password separately
+    if (userData.password)
     {
-      // If password is provided, hash it
-      if (userData.password)
-      {
-        const salt = await bcrypt.genSalt(10);
-        userData.password = await bcrypt.hash(userData.password, salt);
-      }
-
-      // Create update query dynamically
-      const keys = Object.keys(userData).filter(key => userData[key] !== undefined);
-      const values = keys.map(key => userData[key]);
-
-      if (keys.length === 0)
-      {
-        return await User.findById(id);
-      }
-
-      const setClause = keys.map(key => `${key} = ?`).join(', ');
-      const updateQuery = `UPDATE users SET ${setClause} WHERE id = ?`;
-
-      await pool.execute(updateQuery, [...values, id]);
-
-      return await User.findById(id);
-    } catch (error)
-    {
-      throw error;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(userData.password, salt);
+      updates.push('password = ?');
+      values.push(hashedPassword);
+      delete userData.password;
     }
+
+    // Handle other fields
+    Object.entries(userData).forEach(([key, value]) => {
+      if (value !== undefined)
+      {
+        updates.push(`${key} = ?`);
+        values.push(value);
+      }
+    });
+
+    if (updates.length === 0)
+    {
+      return await this.findById(id);
+    }
+
+    values.push(id);
+    await runQuery(
+      `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
+      values
+    );
+
+    return this.findById(id);
   }
 
   // Delete user
   static async delete(id)
   {
-    try
-    {
-      await pool.execute('DELETE FROM users WHERE id = ?', [id]);
-      return true;
-    } catch (error)
-    {
-      throw error;
-    }
+    return await runQuery('DELETE FROM users WHERE id = ?', [id]);
   }
 
   // Compare password
-  static async comparePassword(providedPassword, storedPassword)
+  static async comparePassword(candidatePassword, hashedPassword)
   {
-    return await bcrypt.compare(providedPassword, storedPassword);
+    return await bcrypt.compare(candidatePassword, hashedPassword);
   }
 
   // Generate auth token
-  static generateToken(id)
+  static generateToken(userId)
   {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE
-    });
+    return jwt.sign(
+      { id: userId },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '30d' }
+    );
   }
 }
 
